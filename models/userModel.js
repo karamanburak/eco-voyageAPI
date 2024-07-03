@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,18 +30,33 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please confirm your password"],
       validate: {
+        // This only works on CREATE and SAVE!!!
         validator: function (value) {
           return this.password === value;
         },
         message: "Passwords do not match",
       },
-      //   select: false,
+      //   select: true,
     },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified("password")) return next();
+
+  //    Hash the password with cost factor 12
+  //    Bu sayı, 2'nin üssü olarak hesaplanır. Örneğin, maliyet faktörü 12 ise, hashing işlemi 2^12 (4096) kez tekrarlanır.
+
+  this.password = await bcrypt.hash(this.password, 12);
+
+  // Delete passwordConfirm field
+  this.passwordConfirm = undefined;
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
