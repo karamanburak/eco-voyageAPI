@@ -69,11 +69,6 @@ const tourSchema = new mongoose.Schema(
       required: [true, "A tour must have a cover image"],
     },
     images: [String],
-    createdAt: {
-      type: Date,
-      default: Date.now(),
-      select: false,
-    },
     startDates: [Date],
     secretTour: {
       type: Boolean,
@@ -104,8 +99,15 @@ const tourSchema = new mongoose.Schema(
       },
     ],
     guides: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    review: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
   },
   {
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
@@ -113,6 +115,13 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
+});
+
+// Virtual populate
+tourSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create()
