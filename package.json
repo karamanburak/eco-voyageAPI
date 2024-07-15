@@ -1,5 +1,5 @@
 {
-  "name": "ecoVoyage",
+  "name": "eco-voyage",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -9,7 +9,7 @@
     "debug": "ndb server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Burak Karaman",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
